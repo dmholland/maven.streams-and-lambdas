@@ -3,8 +3,10 @@ package com.github.curriculeon.anthropoid;
 import com.github.curriculeon.tools.RandomUtils;
 import com.github.curriculeon.tools.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -38,7 +40,17 @@ public final class PersonFactory {
      * @return - ArrayList of Person objects
      */ // TODO
     public List<Person> createPersonList(int listSize) {
-        return null;
+        Stream stream=createPersonStream(listSize);
+        // Convert the Stream to List
+        List<Person>
+                list = (List<Person>) stream.collect(Collectors.toList());
+
+        // Create an ArrayList of the List
+        ArrayList<Person>
+                arrayList = new ArrayList<Person>(list);
+
+        return arrayList;  //I had to look up geeks for geeks on this one
+
     }
 
 
@@ -46,11 +58,11 @@ public final class PersonFactory {
      * @param arrayLength - number of Person objects to create
      * @return - Array of Person objects
      */ // TODO
-    public Person[] createPersonArray(int arrayLength) {
-        return null;
+    public Person[] createPersonArray(int arrayLength)
+    {
+        Person[] array = createPersonStream(arrayLength).toArray(Person[]::new);
+        return array;  //Called Stream then casted into person array
     }
-
-
     /**
      * Section 8.2
      *
@@ -58,6 +70,10 @@ public final class PersonFactory {
      * @return - Stream representation of collection of Person objects
      */ // TODO
     public Stream<Person> createPersonStream(int streamCount) {
-        return null;
+        Stream<Person> people=Stream.generate(() -> (createRandomPerson())).limit((streamCount));
+        return people;
     }
 }
+//Stream<Integer> randomNumbers = Stream.generate( () -> (new Random()).nextInt(100) );
+
+//randomNumbers.limit(20).forEach( System.out::println ); //print first 20 numbers

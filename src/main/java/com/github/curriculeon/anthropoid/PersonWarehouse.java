@@ -4,10 +4,9 @@ import com.github.curriculeon.tools.logging.LoggerHandler;
 import com.github.curriculeon.tools.logging.LoggerWarehouse;
 import com.github.curriculeon.tools.ReflectionUtils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -35,7 +34,9 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return list of names of Person objects
      */ // TODO
     public List<String> getNames() {
-        return null;
+        Stream<Person> peopleStream = people.stream();
+
+        return peopleStream.map(Person::getName).collect(Collectors.toList());
     }
 
 
@@ -52,7 +53,15 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return a Stream of respective
      */ //TODO
     public Stream<Person> getUniquelyNamedPeopleStartingWith(Character character) {
-        return null;
+        Stream<Person> peopleStream = people.stream();
+        return
+      people.stream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))//Not sure what this does.
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() == 1)
+                .map(e -> e.getKey());
+        //got from stack over flow.....
     }
 
     /**
@@ -60,7 +69,13 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return a Stream of respective
      */ //TODO
     public Stream<Person> getFirstNUniquelyNamedPeople(int n) {
-        return null;
+
+        return      people.stream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))//Not sure what this does.
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() == 1)
+                .map(e -> e.getKey()).limit(n);//Same as the method above, but limited to however many specified
     }
 
     /**
@@ -69,7 +84,8 @@ public final class PersonWarehouse implements Iterable<Person> {
     public Map<Long, String> getIdToNameMap() {
         return null;
     }
-
+    //Stream<String> words = Stream.of("The", "Quick", "Brown", "Fox");
+    //Map<Integer, String> map = words.collect(Collectors.toMap(String::hashCode, String::toString));
 
     /**
      * @return Stream of Stream of Aliases
