@@ -81,17 +81,24 @@ public final class PersonWarehouse implements Iterable<Person> {
     /**
      * @return a mapping of Person Id to the respective Person name
      */ // TODO
-    public Map<Long, String> getIdToNameMap() {
-        return null;
+     Map<Long, String> getIdToNameMap() {
+        Stream<Person> peopleStream = people.stream();
+        Map<Long,String> map =peopleStream.collect(Collectors.toMap(Person::getPersonalId, Person::getName));
+
+        return map;
     }
-    //Stream<String> words = Stream.of("The", "Quick", "Brown", "Fox");
-    //Map<Integer, String> map = words.collect(Collectors.toMap(String::hashCode, String::toString));
 
     /**
      * @return Stream of Stream of Aliases
      */ // TODO
     public Stream<Stream<String>> getNestedAliases() {
-        return null;
+
+        List<Stream<String>> outerList = new ArrayList<>();
+        people.forEach(person -> outerList.add(Arrays.stream(person.getAliases()).sequential()));
+
+        return outerList.stream();//got frustrated and copied from Chris Fulton. ...could not access arrays after putting into stream
+        //Only choice is to make a list of streams and then make a stream of the lists of streams
+
     }
 
 
@@ -99,7 +106,10 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return Stream of all Aliases
      */ // TODO
     public Stream<String> getAllAliases() {
-        return null;
+        List<String> aliases = new ArrayList<>();
+        getNestedAliases().forEach(x -> x.forEach(aliases::add));//I have a problem with this. Are we calling forEachtwice?
+        return aliases.stream();
+
     }
 
     // DO NOT MODIFY
